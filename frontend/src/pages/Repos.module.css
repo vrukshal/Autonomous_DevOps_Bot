@@ -1,0 +1,221 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.pageHeader {
+  margin-bottom: 20px;
+}
+
+.logoLink {
+  text-decoration: none;
+  transition: transform 0.2s;
+}
+
+.logoLink:hover {
+  transform: scale(1.05);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.backButton {
+  padding: 10px 20px;
+  background: #666;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.backButton:hover {
+  background: #555;
+}
+
+.repoList {
+  display: grid;
+  gap: 16px;
+}
+
+.repoCard {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s;
+}
+
+.repoCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.repoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.repoBadges {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.repoName {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.privateBadge,
+.publicBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.privateBadge {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.publicBadge {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.repoInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.branchInfo {
+  color: #666;
+}
+
+.branchInfo strong {
+  color: #333;
+  font-weight: 600;
+}
+
+.empty {
+  background: white;
+  border-radius: 8px;
+  padding: 48px;
+  text-align: center;
+  color: #666;
+  font-size: 16px;
+}
+
+.loading,
+.error {
+  background: white;
+  border-radius: 8px;
+  padding: 48px;
+  text-align: center;
+}
+
+.loading {
+  color: #666;
+  font-size: 18px;
+}
+
+.error {
+  color: #f44336;
+}
+
+.error p {
+  margin-bottom: 16px;
+  font-size: 16px;
+}
+
+.actions {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trackedReposButton {
+  padding: 12px 24px;
+  background: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.trackedReposButton:hover {
+  background: #1976d2;
+}
+
+.repoActions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.trackButton {
+  padding: 8px 16px;
+  background: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.trackButton:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.trackButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.trackedButton {
+  padding: 8px 16px;
+  background: #e0e0e0;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: default;
+}
+
+.trackedBadge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e3f2fd;
+  color: #1976d2;
+}

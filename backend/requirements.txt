@@ -1,0 +1,9 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-dotenv==1.0.0
+firebase-admin==6.4.0
+google-cloud-firestore==2.13.1
+pycryptodome==3.19.0
+httpx==0.25.2
+python-multipart==0.0.6
+cryptography==41.0.7

@@ -1,0 +1,82 @@
+.logoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  display: block;
+  object-fit: contain;
+}
+
+.logo.small {
+  width: 80px;
+  height: 80px;
+}
+
+.logo.medium {
+  width: 120px;
+  height: 120px;
+}
+
+.logo.large {
+  width: 180px;
+  height: 180px;
+}
+
+.logoFallback {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+}
+
+.robotIcon {
+  font-size: 60px;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.logoTextAutonomous {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2196f3;
+  line-height: 1;
+}
+
+.logoTextDevOps {
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logo.medium {
+    width: 100px;
+    height: 100px;
+  }
+
+  .logo.large {
+    width: 140px;
+    height: 140px;
+  }
+
+  .logoTextAutonomous {
+    font-size: 20px;
+  }
+
+  .logoTextDevOps {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,374 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 28px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statusConnected,
+.statusDisconnected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.statusConnected {
+  color: #2e7d32;
+}
+
+.statusDisconnected {
+  color: #c62828;
+}
+
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusConnected .statusDot {
+  background: #4caf50;
+}
+
+.statusDisconnected .statusDot {
+  background: #f44336;
+}
+
+.githubUser {
+  color: #555;
+  font-size: 14px;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.connectButton,
+.disconnectButton,
+.reposButton {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.connectButton {
+  background: #3949ab;
+  color: white;
+}
+
+.disconnectButton {
+  background: #c62828;
+  color: white;
+}
+
+.reposButton {
+  background: #00897b;
+  color: white;
+}
+
+.connectButton:hover:not(:disabled),
+.disconnectButton:hover:not(:disabled),
+.reposButton:hover {
+  opacity: 0.92;
+}
+
+.connectButton:disabled,
+.disconnectButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.errorBox {
+  background: #ffebee;
+  color: #b71c1c;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.subtitle {
+  color: #555;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 24px;
+  max-width: 640px;
+}
+
+.muted {
+  color: #666;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.muted a {
+  color: #3949ab;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listItem {
+  margin: 0;
+}
+
+.listLink {
+  display: block;
+  background: white;
+  border-radius: 12px;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e0e0e0;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.listLink:hover {
+  border-color: #9fa8da;
+  box-shadow: 0 4px 14px rgba(57, 73, 171, 0.12);
+}
+
+.listTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.repoTag {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+
+.statusTag {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eceff1;
+  color: #455a64;
+}
+
+.statusTag[data-status='resolved'] {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.wfLine {
+  font-size: 14px;
+  color: #555;
+}
+
+.aiRow {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.aiPill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #ede7f6;
+  color: #5e35b1;
+}
+
+.aiPill[data-ai='completed'] {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.aiPill[data-ai='failed'] {
+  background: #ffebee;
+  color: #b71c1c;
+}
+
+.sevHigh {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #ffcdd2;
+  color: #b71c1c;
+}
+
+.sevMed {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.sevLow {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.hint {
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: #e8eaf6;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.5;
+}
+
+.hint a {
+  color: #3949ab;
+}
+
+.backLink {
+  display: inline-block;
+  margin-bottom: 16px;
+  color: #3949ab;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.backLink:hover {
+  text-decoration: underline;
+}
+
+.detailActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.btnPrimary,
+.btnSecondary,
+.btnGhost {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+}
+
+.btnPrimary {
+  background: #3949ab;
+  color: white;
+}
+
+.btnSecondary {
+  background: #eceff1;
+  color: #333;
+}
+
+.btnGhost {
+  background: transparent;
+  border: 1px solid #bdbdbd;
+  color: #333;
+}
+
+.btnPrimary:disabled,
+.btnSecondary:disabled,
+.btnGhost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.extLink {
+  display: inline-block;
+  margin-top: 8px;
+  color: #0277bd;
+  font-weight: 500;
+}
+
+.aiSummary {
+  font-size: 16px;
+  line-height: 1.55;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.h3 {
+  font-size: 15px;
+  margin: 16px 0 8px;
+  color: #1a1a2e;
+}
+
+.bullets {
+  margin: 0 0 8px 1rem;
+  padding: 0;
+  color: #444;
+  line-height: 1.5;
+}
+
+.metaLine {
+  font-size: 13px;
+  color: #666;
+  margin-top: 16px;
+}
+
+.guardNote {
+  font-size: 13px;
+  color: #5d4037;
+  background: #fff8e1;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 12px;
+}

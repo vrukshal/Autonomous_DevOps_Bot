@@ -1,0 +1,156 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cardTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.statusContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statusConnected,
+.statusDisconnected {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.statusConnected {
+  color: #4caf50;
+}
+
+.statusDisconnected {
+  color: #f44336;
+}
+
+.statusDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.statusConnected .statusDot {
+  background: #4caf50;
+}
+
+.statusDisconnected .statusDot {
+  background: #f44336;
+}
+
+.githubUser {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.connectButton,
+.disconnectButton,
+.reposButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.connectButton {
+  background: #2196f3;
+  color: white;
+}
+
+.connectButton:hover:not(:disabled) {
+  background: #1976d2;
+}
+
+.disconnectButton {
+  background: #f44336;
+  color: white;
+}
+
+.disconnectButton:hover:not(:disabled) {
+  background: #d32f2f;
+}
+
+.reposButton {
+  background: #4caf50;
+  color: white;
+}
+
+.reposButton:hover {
+  background: #45a049;
+}
+
+.connectButton:disabled,
+.disconnectButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px;
+  font-size: 18px;
+  color: #666;
+}
+
+.hint {
+  margin-top: 28px;
+  padding: 16px 18px;
+  background: #e8eaf6;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #333;
+}
+
+.inlineLink {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #3949ab;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: inherit;
+}
