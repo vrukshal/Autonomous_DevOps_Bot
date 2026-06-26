@@ -1,38 +1,25 @@
+import { Link } from 'react-router-dom';
 import styles from './Logo.module.css';
 
 interface LogoProps {
-  size?: 'small' | 'medium' | 'large';
+  size?: 'sm' | 'md';
   showText?: boolean;
+  className?: string;
 }
 
-/**
- * Logo component for Autonomous DevOps Bot
- */
-export function Logo({ size = 'medium', showText = true }: LogoProps) {
+export function Logo({ size = 'md', showText = true, className = '' }: LogoProps) {
   return (
-    <div className={styles.logoContainer}>
-      <img 
-        src="/logo.png" 
-        alt="Autonomous DevOps Bot Logo" 
-        className={`${styles.logo} ${styles[size]}`}
-        onError={(e) => {
-          // Fallback if logo image doesn't exist
-          const target = e.target as HTMLImageElement;
-          target.style.display = 'none';
-          if (target.nextSibling) {
-            (target.nextSibling as HTMLElement).style.display = 'block';
-          }
-        }}
-      />
-      <div className={styles.logoFallback} style={{ display: 'none' }}>
-        <div className={styles.robotIcon}>🤖</div>
-      </div>
-      {showText && (
-        <div className={styles.logoText}>
-          <span className={styles.logoTextAutonomous}>Autonomous</span>
-          <span className={styles.logoTextDevOps}>DevOps Bot</span>
-        </div>
-      )}
-    </div>
+    <span className={`${styles.logo} ${styles[size]} ${className}`}>
+      <span className={styles.mark} aria-hidden />
+      {showText && <span className={styles.text}>DevOps Bot</span>}
+    </span>
+  );
+}
+
+export function LogoLink({ to = '/' }: { to?: string }) {
+  return (
+    <Link to={to} className={styles.link}>
+      <Logo />
+    </Link>
   );
 }

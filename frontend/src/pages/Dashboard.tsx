@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getGitHubStatus, startGitHubAuth, disconnectGitHub } from '../api/github';
+import { PageHeader } from '../components/PageHeader';
+import { LoadingState } from '../components/LoadingState';
+import ui from '../styles/ui.module.css';
 import styles from './Dashboard.module.css';
 
-/**
- * Dashboard page showing GitHub connection status
- */
 export function Dashboard() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<{ connected: boolean; githubUser?: string } | null>(null);
@@ -63,81 +63,87 @@ export function Dashboard() {
   };
 
   if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading...</div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
-  return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Dashboard</h1>
+  const connected = status?.connected;
 
-      <div className={styles.card}>
-        <h2 className={styles.cardTitle}>GitHub Integration</h2>
-        {status?.connected ? (
-          <div className={styles.statusContainer}>
-            <div className={styles.statusConnected}>
-              <span className={styles.statusDot}></span>
-              Connected
-            </div>
-            {status.githubUser && (
-              <p className={styles.githubUser}>User: {status.githubUser}</p>
+  return (
+    <div className={ui.pageWide}>
+      <PageHeader
+        title="Dashboard"
+        description="Overview of your GitHub connection and quick access to key workflows."
+      />
+
+      <div className={styles.grid}>
+        <section className={styles.primaryCard}>
+          <div className={styles.cardHeader}>
+            <h2 className={styles.cardTitle}>GitHub</h2>
+            {connected ? (
+              <span className={ui.badgeSuccess}>Connected</span>
+            ) : (
+              <span className={ui.badge}>Not connected</span>
             )}
-            <div className={styles.buttonGroup}>
+          </div>
+
+          {connected ? (
+            <>
+              {status.githubUser && (
+                <p className={styles.connectedAs}>
+                  Signed in as <strong>{status.githubUser}</strong>
+                </p>
+              )}
+              <div className={ui.btnGroup}>
+                <button type="button" className={ui.btnSecondary} onClick={() => navigate('/repos')}>
+                  Repositories
+                </button>
+                <button type="button" className={ui.btnSecondary} onClick={() => navigate('/integrations')}>
+                  Integrations
+                </button>
+                <button
+                  type="button"
+                  className={ui.btnDanger}
+                  onClick={handleDisconnect}
+                  disabled={actionLoading}
+                >
+                  {actionLoading ? 'Disconnecting' : 'Disconnect'}
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className={styles.cardDesc}>
+                Connect GitHub to track repositories and receive workflow failure incidents.
+              </p>
               <button
-                className={styles.disconnectButton}
-                onClick={handleDisconnect}
+                type="button"
+                className={ui.btnPrimary}
+                onClick={handleConnect}
                 disabled={actionLoading}
               >
-                {actionLoading ? 'Disconnecting...' : 'Disconnect GitHub'}
+                {actionLoading ? 'Connecting' : 'Connect GitHub'}
               </button>
-              <button
-                className={styles.reposButton}
-                onClick={() => navigate('/repos')}
-              >
-                View Repositories
-              </button>
-              <button
-                className={styles.reposButton}
-                onClick={() => navigate('/integrations')}
-              >
-                Webhooks & AI setup
-              </button>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.statusContainer}>
-            <div className={styles.statusDisconnected}>
-              <span className={styles.statusDot}></span>
-              Not Connected
-            </div>
-            <p className={styles.description}>
-              Connect your GitHub account to manage repositories and CI incidents.
-            </p>
-            <button
-              className={styles.connectButton}
-              onClick={handleConnect}
-              disabled={actionLoading}
-            >
-              {actionLoading ? 'Connecting...' : 'Connect GitHub'}
+            </>
+          )}
+        </section>
+
+        <section className={styles.quickLinks}>
+          <h2 className={styles.quickTitle}>Quick links</h2>
+          <div className={styles.quickGrid}>
+            <button type="button" className={styles.quickCard} onClick={() => navigate('/tracked-repos')}>
+              <span className={styles.quickLabel}>Tracked repos</span>
+              <span className={styles.quickDesc}>Manage production targets</span>
+            </button>
+            <button type="button" className={styles.quickCard} onClick={() => navigate('/incidents')}>
+              <span className={styles.quickLabel}>Incidents</span>
+              <span className={styles.quickDesc}>Review CI failures</span>
+            </button>
+            <button type="button" className={styles.quickCard} onClick={() => navigate('/integrations')}>
+              <span className={styles.quickLabel}>Webhooks</span>
+              <span className={styles.quickDesc}>Configure delivery</span>
             </button>
           </div>
-        )}
-      </div>
-
-      <div className={styles.hint}>
-        <strong>Incidents & AI:</strong> Track repos under Repos → Track, then open{' '}
-        <button
-          type="button"
-          className={styles.inlineLink}
-          onClick={() => navigate('/integrations')}
-        >
-          Integrations
-        </button>{' '}
-        to register a GitHub webhook. Failed workflows create incidents and run guardrailed triage
-        when <code>OPENAI_API_KEY</code> is set on the server.
+        </section>
       </div>
     </div>
   );

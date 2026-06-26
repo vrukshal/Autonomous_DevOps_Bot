@@ -14,7 +14,7 @@ A full-stack DevOps assistant: connect GitHub, track production repos, receive *
 - **Integrations UI**: Copy webhook URL, check env readiness, **register repo webhooks** via GitHub API
 - **Protected routes** and **Firebase ID token** verification on every API call
 
-## Project Structure
+For **Railway** deployment (two services, env vars, `VITE_API_BASE_URL`), see **[RAILWAY.md](./RAILWAY.md)**.
 
 ```
 .

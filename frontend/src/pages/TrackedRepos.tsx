@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTrackedRepos, deleteTrackedRepo, getRepoKey, TrackedRepo, getGitHubWorkflows, GitHubWorkflow, updateTrackedRepo } from '../api/trackedRepos';
+import {
+  getTrackedRepos,
+  deleteTrackedRepo,
+  getRepoKey,
+  TrackedRepo,
+  getGitHubWorkflows,
+  GitHubWorkflow,
+  updateTrackedRepo,
+} from '../api/trackedRepos';
 import { registerRepoWebhook } from '../api/integrations';
+import { PageHeader } from '../components/PageHeader';
+import { LoadingState } from '../components/LoadingState';
+import { Modal } from '../components/Modal';
+import ui from '../styles/ui.module.css';
 import styles from './TrackedRepos.module.css';
 
-/**
- * Tracked Repositories page
- */
 export function TrackedRepos() {
   const navigate = useNavigate();
   const [trackedRepos, setTrackedRepos] = useState<TrackedRepo[]>([]);
@@ -26,10 +35,9 @@ export function TrackedRepos() {
     try {
       setLoading(true);
       setError(null);
-      const data = await getTrackedRepos();
-      setTrackedRepos(data);
-    } catch (error) {
-      console.error('Error loading tracked repos:', error);
+      setTrackedRepos(await getTrackedRepos());
+    } catch (err) {
+      console.error('Error loading tracked repos:', err);
       setError('Failed to load tracked repositories.');
     } finally {
       setLoading(false);
@@ -37,17 +45,12 @@ export function TrackedRepos() {
   };
 
   const handleUntrack = async (repo: TrackedRepo) => {
-    if (!confirm(`Are you sure you want to untrack ${repo.owner}/${repo.repo}?`)) {
-      return;
-    }
-
+    if (!confirm(`Untrack ${repo.owner}/${repo.repo}?`)) return;
     try {
-      const repoKey = getRepoKey(repo.owner, repo.repo);
-      await deleteTrackedRepo(repoKey);
+      await deleteTrackedRepo(getRepoKey(repo.owner, repo.repo));
       await loadTrackedRepos();
-    } catch (error) {
-      console.error('Error untracking repo:', error);
-      alert('Failed to untrack repository. Please try again.');
+    } catch (err) {
+      alert('Failed to untrack repository.');
     }
   };
 
@@ -55,13 +58,10 @@ export function TrackedRepos() {
     setSelectedRepo(repo);
     setShowSettings(true);
     setLoadingWorkflows(true);
-    
     try {
-      const workflowsData = await getGitHubWorkflows(repo.owner, repo.repo);
-      setWorkflows(workflowsData);
-    } catch (error) {
-      console.error('Error loading workflows:', error);
-      alert('Failed to load workflows. Please try again.');
+      setWorkflows(await getGitHubWorkflows(repo.owner, repo.repo));
+    } catch (err) {
+      alert('Failed to load workflows.');
     } finally {
       setLoadingWorkflows(false);
     }
@@ -73,90 +73,65 @@ export function TrackedRepos() {
     deployWorkflowName?: string | null;
   }) => {
     if (!selectedRepo) return;
-
     try {
       setSaving(true);
-      const repoKey = getRepoKey(selectedRepo.owner, selectedRepo.repo);
-      await updateTrackedRepo(repoKey, updates);
+      await updateTrackedRepo(getRepoKey(selectedRepo.owner, selectedRepo.repo), updates);
       await loadTrackedRepos();
       setShowSettings(false);
       setSelectedRepo(null);
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      alert('Failed to save settings. Please try again.');
+    } catch (err) {
+      alert('Failed to save settings.');
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Loading tracked repositories...</div>
-      </div>
-    );
-  }
+  if (loading) return <LoadingState />;
 
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <p>{error}</p>
-          <button className={styles.backButton} onClick={() => navigate('/dashboard')}>
-            Back to Dashboard
-          </button>
-        </div>
+      <div className={ui.pageWide}>
+        <div className={ui.error}>{error}</div>
       </div>
     );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.pageHeader}>
-        <h1 className={styles.title}>Tracked repositories</h1>
-      </div>
+    <div className={ui.pageWide}>
+      <PageHeader
+        title="Tracked repositories"
+        description="Production targets monitored for workflow failures."
+      />
 
       {trackedRepos.length === 0 ? (
-        <div className={styles.empty}>
-          <p>No tracked repositories yet.</p>
-          <button className={styles.browseButton} onClick={() => navigate('/repos')}>
-            Browse Repositories
+        <div className={`${ui.cardFlat} ${styles.emptyCard}`}>
+          <p className={ui.bodyText}>No repositories tracked yet.</p>
+          <button type="button" className={ui.btnPrimary} onClick={() => navigate('/repos')}>
+            Browse repositories
           </button>
         </div>
       ) : (
-        <div className={styles.repoList}>
+        <div className={styles.table}>
           {trackedRepos.map((repo) => (
-            <div key={`${repo.owner}_${repo.repo}`} className={styles.repoCard}>
-              <div className={styles.repoHeader}>
-                <div>
-                  <h3 className={styles.repoName}>{repo.owner}/{repo.repo}</h3>
-                  <div className={styles.repoMeta}>
-                    <span className={styles.environmentBadge}>{repo.environment}</span>
-                    {repo.deployWorkflowName && (
-                      <span className={styles.workflowBadge}>{repo.deployWorkflowName}</span>
-                    )}
-                  </div>
-                </div>
-                <div className={styles.repoActions}>
-                  <button
-                    className={styles.settingsButton}
-                    onClick={() => handleOpenSettings(repo)}
-                  >
-                    Settings
-                  </button>
-                  <button
-                    className={styles.untrackButton}
-                    onClick={() => handleUntrack(repo)}
-                  >
-                    Untrack
-                  </button>
-                </div>
+            <div key={`${repo.owner}_${repo.repo}`} className={styles.row}>
+              <div className={styles.info}>
+                <p className={styles.name}>
+                  {repo.owner}/{repo.repo}
+                </p>
+                <p className={ui.meta}>
+                  {repo.environment}
+                  {repo.deployWorkflowName ? ` · ${repo.deployWorkflowName}` : ''}
+                  {' · '}
+                  {repo.defaultBranch}
+                </p>
               </div>
-              <div className={styles.repoInfo}>
-                <span>Default branch: <strong>{repo.defaultBranch}</strong></span>
-                {repo.deployWorkflowId && (
-                  <span>Workflow ID: <strong>{repo.deployWorkflowId}</strong></span>
-                )}
+              <div className={styles.actions}>
+                <button type="button" className={`${ui.btnSecondary} ${ui.btnSm}`} onClick={() => handleOpenSettings(repo)}>
+                  Settings
+                </button>
+                <button type="button" className={`${ui.btnGhost} ${ui.btnSm}`} onClick={() => handleUntrack(repo)}>
+                  Untrack
+                </button>
               </div>
             </div>
           ))}
@@ -193,19 +168,25 @@ interface SettingsModalProps {
   }) => void;
 }
 
-function SettingsModal({ repo, workflows, loadingWorkflows, saving, onClose, onSave }: SettingsModalProps) {
+function SettingsModal({
+  repo,
+  workflows,
+  loadingWorkflows,
+  saving,
+  onClose,
+  onSave,
+}: SettingsModalProps) {
   const [environment, setEnvironment] = useState(repo.environment);
   const [selectedWorkflowId, setSelectedWorkflowId] = useState<number | null>(repo.deployWorkflowId);
   const [hookBusy, setHookBusy] = useState(false);
 
   const registerHook = async () => {
-    const key = getRepoKey(repo.owner, repo.repo);
     setHookBusy(true);
     try {
-      const r = await registerRepoWebhook(key);
-      alert(r.message || 'Webhook configured');
+      const r = await registerRepoWebhook(getRepoKey(repo.owner, repo.repo));
+      alert(r.message || 'Webhook registered.');
     } catch (e) {
-      alert(e instanceof Error ? e.message : 'Failed to register webhook');
+      alert(e instanceof Error ? e.message : 'Failed to register webhook.');
     } finally {
       setHookBusy(false);
     }
@@ -213,7 +194,7 @@ function SettingsModal({ repo, workflows, loadingWorkflows, saving, onClose, onS
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const selectedWorkflow = workflows.find(w => w.id === selectedWorkflowId);
+    const selectedWorkflow = workflows.find((w) => w.id === selectedWorkflowId);
     onSave({
       environment,
       deployWorkflowId: selectedWorkflowId,
@@ -222,77 +203,68 @@ function SettingsModal({ repo, workflows, loadingWorkflows, saving, onClose, onS
   };
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.modalHeader}>
-          <h2>Settings: {repo.owner}/{repo.repo}</h2>
-          <button className={styles.closeButton} onClick={onClose}>×</button>
+    <Modal
+      title={`${repo.owner}/${repo.repo}`}
+      onClose={onClose}
+      footer={
+        <>
+          <button type="button" className={ui.btnSecondary} onClick={onClose}>
+            Cancel
+          </button>
+          <button type="submit" form="repo-settings-form" className={ui.btnPrimary} disabled={saving}>
+            {saving ? 'Saving' : 'Save changes'}
+          </button>
+        </>
+      }
+    >
+      <form id="repo-settings-form" onSubmit={handleSubmit}>
+        <div className={ui.formGroup}>
+          <label className={ui.label} htmlFor="environment">
+            Environment
+          </label>
+          <select
+            id="environment"
+            className={ui.select}
+            value={environment}
+            onChange={(e) => setEnvironment(e.target.value)}
+          >
+            <option value="production">Production</option>
+            <option value="staging">Staging</option>
+            <option value="development">Development</option>
+          </select>
         </div>
-        <form onSubmit={handleSubmit} className={styles.modalContent}>
-          <div className={styles.formGroup}>
-            <label htmlFor="environment">Environment</label>
+        <div className={ui.formGroup}>
+          <label className={ui.label} htmlFor="workflow">
+            Deploy workflow
+          </label>
+          {loadingWorkflows ? (
+            <p className={ui.meta}>Loading workflows</p>
+          ) : (
             <select
-              id="environment"
-              value={environment}
-              onChange={(e) => setEnvironment(e.target.value)}
-              className={styles.select}
+              id="workflow"
+              className={ui.select}
+              value={selectedWorkflowId || ''}
+              onChange={(e) =>
+                setSelectedWorkflowId(e.target.value ? parseInt(e.target.value, 10) : null)
+              }
             >
-              <option value="production">Production</option>
-              <option value="staging">Staging</option>
-              <option value="development">Development</option>
+              <option value="">None</option>
+              {workflows.map((w) => (
+                <option key={w.id} value={w.id}>
+                  {w.name} ({w.state})
+                </option>
+              ))}
             </select>
-          </div>
-
-          <div className={styles.formGroup}>
-            <label htmlFor="workflow">Deploy Workflow</label>
-            {loadingWorkflows ? (
-              <div className={styles.loading}>Loading workflows...</div>
-            ) : (
-              <select
-                id="workflow"
-                value={selectedWorkflowId || ''}
-                onChange={(e) => setSelectedWorkflowId(e.target.value ? parseInt(e.target.value) : null)}
-                className={styles.select}
-              >
-                <option value="">None</option>
-                {workflows.map((workflow) => (
-                  <option key={workflow.id} value={workflow.id}>
-                    {workflow.name} ({workflow.state})
-                  </option>
-                ))}
-              </select>
-            )}
-            {workflows.length === 0 && !loadingWorkflows && (
-              <p className={styles.helpText}>No workflows found for this repository.</p>
-            )}
-          </div>
-
-          <div className={styles.formGroup}>
-            <label>GitHub webhook</label>
-            <p className={styles.helpText}>
-              Registers a <code>workflow_run</code> webhook on this repo (requires{' '}
-              <code>WEBHOOK_PUBLIC_URL</code> and <code>GITHUB_WEBHOOK_SECRET</code> on the server).
-            </p>
-            <button
-              type="button"
-              className={styles.webhookButton}
-              disabled={hookBusy}
-              onClick={registerHook}
-            >
-              {hookBusy ? 'Working…' : 'Register webhook on GitHub'}
-            </button>
-          </div>
-
-          <div className={styles.modalActions}>
-            <button type="button" className={styles.cancelButton} onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className={styles.saveButton} disabled={saving}>
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          )}
+        </div>
+        <div className={ui.formGroup}>
+          <label className={ui.label}>Webhook</label>
+          <p className={ui.meta}>Register workflow_run delivery for this repository.</p>
+          <button type="button" className={ui.btnSecondary} disabled={hookBusy} onClick={registerHook}>
+            {hookBusy ? 'Working' : 'Register webhook'}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './firebase/config';
 import { Home } from './pages/Home';
+import { Docs } from './pages/Docs';
 import { Login } from './pages/Login';
 import { Dashboard } from './pages/Dashboard';
 import { Repos } from './pages/Repos';
@@ -11,18 +12,16 @@ import { IncidentDetail } from './pages/IncidentDetail';
 import { Integrations } from './pages/Integrations';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AuthedShell } from './components/AuthedShell';
+import { LoadingState } from './components/LoadingState';
 import styles from './App.module.css';
 
-/**
- * Main App component with routing
- */
 function App() {
   const [user, loading] = useAuthState(auth);
 
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
-        <div>Loading...</div>
+        <LoadingState />
       </div>
     );
   }
@@ -31,6 +30,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/docs" element={<Docs />} />
         <Route
           path="/login"
           element={user ? <Navigate to="/dashboard" replace /> : <Login />}

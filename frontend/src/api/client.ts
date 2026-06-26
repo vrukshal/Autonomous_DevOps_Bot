@@ -1,6 +1,7 @@
 import { auth } from '../firebase/config';
 
-const API_BASE_URL = '/api';
+/** Dev: Vite proxy uses `/api`. Prod (e.g. Railway): set `VITE_API_BASE_URL` at build time to full API root including `/api`. */
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') || '/api';
 
 /**
  * Get the current user's Firebase ID token

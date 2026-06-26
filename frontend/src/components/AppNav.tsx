@@ -1,18 +1,32 @@
+import { useEffect, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
-import { Logo } from './Logo';
+import { LogoLink } from './Logo';
 import styles from './AppNav.module.css';
 
-function navClass(isActive: boolean) {
-  return `${styles.link} ${isActive ? styles.active : ''}`.trim();
+const NAV_ITEMS = [
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/repos', label: 'Repos' },
+  { to: '/tracked-repos', label: 'Tracked' },
+  { to: '/incidents', label: 'Incidents' },
+  { to: '/integrations', label: 'Integrations' },
+];
+
+function linkClass(isActive: boolean) {
+  return isActive ? `${styles.link} ${styles.active}` : styles.link;
 }
 
-/**
- * Primary navigation for signed-in app shell
- */
 export function AppNav() {
   const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut(auth);
@@ -20,30 +34,22 @@ export function AppNav() {
   };
 
   return (
-    <nav className={styles.nav}>
-      <NavLink to="/dashboard" className={styles.logo}>
-        <Logo size="small" showText />
-      </NavLink>
-      <div className={styles.links}>
-        <NavLink to="/dashboard" className={({ isActive }) => navClass(isActive)}>
-          Dashboard
-        </NavLink>
-        <NavLink to="/repos" className={({ isActive }) => navClass(isActive)}>
-          Repos
-        </NavLink>
-        <NavLink to="/tracked-repos" className={({ isActive }) => navClass(isActive)}>
-          Tracked
-        </NavLink>
-        <NavLink to="/incidents" className={({ isActive }) => navClass(isActive)}>
-          Incidents
-        </NavLink>
-        <NavLink to="/integrations" className={({ isActive }) => navClass(isActive)}>
-          Integrations
-        </NavLink>
+    <header className={`${styles.nav} ${scrolled ? styles.scrolled : ''}`}>
+      <div className={styles.inner}>
+        <LogoLink to="/dashboard" />
+
+        <nav className={styles.links} aria-label="App navigation">
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.to} to={item.to} className={({ isActive }) => linkClass(isActive)}>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <button type="button" className={styles.signOut} onClick={handleSignOut}>
+          Sign out
+        </button>
       </div>
-      <button type="button" className={styles.signOut} onClick={handleSignOut}>
-        Sign out
-      </button>
-    </nav>
+    </header>
   );
 }

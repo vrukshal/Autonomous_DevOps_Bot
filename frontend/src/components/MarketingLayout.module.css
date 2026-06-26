@@ -1,7 +1,10 @@
-.loadingContainer {
+.shell {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
   min-height: 100vh;
   background: var(--bg-base);
+}
+
+.main {
+  flex: 1;
 }

@@ -47,6 +47,22 @@ from integrations import get_integrations_status, get_webhook_callback_url
 
 load_dotenv()
 
+
+def _cors_origins() -> list:
+    origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+    front = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+    if front:
+        origins.append(front)
+    for raw in os.getenv("CORS_EXTRA_ORIGINS", "").split(","):
+        o = raw.strip().rstrip("/")
+        if o and o not in origins:
+            origins.append(o)
+    return origins
+
+
 app = FastAPI(title="DevOps Bot API")
 
 # Create API router with /api prefix
@@ -55,10 +71,7 @@ api_router = APIRouter(prefix="/api")
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
+    allow_origins=_cors_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

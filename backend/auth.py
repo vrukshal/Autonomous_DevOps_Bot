@@ -5,6 +5,7 @@ Verifies Firebase ID tokens using Firebase Admin SDK
 import firebase_admin
 from firebase_admin import credentials, auth
 from google.cloud import firestore
+import json
 import os
 from dotenv import load_dotenv
 
@@ -12,9 +13,21 @@ load_dotenv()
 
 # Initialize Firebase Admin SDK
 if not firebase_admin._apps:
-    # Use service account key if provided, otherwise use default credentials
-    service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY")
-    if service_account_path and os.path.exists(service_account_path):
+    service_account_json = os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON", "").strip()
+    service_account_path = os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY", "").strip()
+
+    if service_account_json:
+        try:
+            info = json.loads(service_account_json)
+            cred = credentials.Certificate(info)
+            firebase_admin.initialize_app(cred)
+        except Exception as e:
+            print(f"Warning: FIREBASE_SERVICE_ACCOUNT_JSON invalid: {e}")
+            try:
+                firebase_admin.initialize_app()
+            except Exception as e2:
+                print(f"Warning: Could not initialize Firebase Admin: {e2}")
+    elif service_account_path and os.path.exists(service_account_path):
         cred = credentials.Certificate(service_account_path)
         firebase_admin.initialize_app(cred)
     else:
@@ -24,7 +37,10 @@ if not firebase_admin._apps:
         except Exception as e:
             # If no credentials available, we'll need to handle this
             print(f"Warning: Could not initialize Firebase Admin: {e}")
-            print("Please set FIREBASE_SERVICE_ACCOUNT_KEY environment variable")
+            print(
+                "Set FIREBASE_SERVICE_ACCOUNT_JSON (recommended on Railway) or "
+                "FIREBASE_SERVICE_ACCOUNT_KEY path to a service account JSON file."
+            )
 
 # Initialize Firestore
 try:
